@@ -55,9 +55,6 @@ class mxp_translator
 	protected $user;
 	/** @var string phpBB root path */
 	protected $root_path;
-	
-	protected $common_language_files_loaded;
-	
 	protected $phpbb_admin_path;
 	/** @var string forum root path */
 	protected $forum_root_path;
@@ -209,7 +206,6 @@ class mxp_translator
 		if ($config['version'] < '3.1.0')
 		{			
 			define('EXT_TABLE',	$table_prefix . 'ext');
-			define('STYLES_TABLE',	'THEMES_TABLE');
 		}
 		
 		$this->trans = $this->container->get('orynider.mx_translator.googletranslater');
@@ -250,7 +246,7 @@ class mxp_translator
 	
 	public function mxp_translator()
 	{
-		global $mx_cache, $board_config, $db, $table_prefix, $mx_table_prefix; 
+		global $mx_cache, $board_config, $db, $table_prefix; 
 		global $phpbb_root_path, $smf_root_path, $mx_root_path, $module_root_path; 
 		global $php_ext, $phpEx, $lang, $mx_request_vars, $template, $mx_user;
 		$this->cache = $mx_cache;
@@ -264,7 +260,6 @@ class mxp_translator
 		$this->s = $this->request->request('s', '');
 		//$this->l = $this->request->request('l', '');
 		/** POST 64 & GET 128 **/
-		$type = 64;
 		$this->l = $this->mx_read('l', ($type | 64 | 128), '', false);
 		
 		/* set language_from to translator_default_lang */
@@ -288,8 +283,8 @@ class mxp_translator
 		$this->template = $template;
 		$this->user = $mx_user;
 		$this->language	= $mx_user->lang;		
-		$this->root_path = !empty($mx_root_path) ? $mx_root_path : $mx_root_path;
-		$this->phpbb_admin_path = $phpbb_root_path . 'adm/';
+		$this->root_path = !empty($root_path) ? $root_path : $mx_root_path;
+		$this->phpbb_admin_path = $root_path . 'adm/';
 		$this->forum_root_path = !empty($phpbb_root_path) ? str_replace('olympus', 'rhea', $phpbb_root_path) : (!empty($smf_root_path) ? $smf_root_path : $root_path);
 		$this->table_prefix = $table_prefix;
 		$this->mx_table_prefix = $mx_table_prefix;
@@ -343,7 +338,6 @@ class mxp_translator
 		if ($board_config['version'] < '3.1.0')
 		{			
 			define('EXT_TABLE',	$table_prefix . 'ext');
-			define('STYLES_TABLE',	'THEMES_TABLE');			
 		}
 		
 		/* Get an instance of the admin controller */
@@ -1458,7 +1452,7 @@ class mxp_translator
 				    /* Copy the google arrays */				
 					$this->tran_ary[$l_key] = $this->g_ary[$l_key];
 				}					
-				if (isset($this->tran_ary[$l_key]) && @is_array($this->tran_ary[$l_key]))
+				if (is_array($this->tran_ary[$l_key]))
 				{
 				    /* Convert the array to a string */
 				    $tran_ary_string = print_r($this->tran_ary[$l_key], true);					
@@ -1546,57 +1540,16 @@ class mxp_translator
 		}
 		else
 		{
-			switch ($this->s)
-			{
-				case 'MXP':
-					$file_content = "/**
-									 * Language file [" . $this->module_file . "]
-									 * 
-									 * @package language
-									 * @author " . $mx_user->data['username'] . "
-									 * @" ."version $I" . "d: " . $this->module_file . ",v 1.-1 " . date( 'Y/m/d H:i:s') ." " . $userdata['username'] . " Exp $
-									 * @copyright (c) 2002-2008 [Jon Ohlsson] MX-Publisher Project Team
-									 * @license http://opensource.org/licenses/gpl-license.php GNU General Public License v2
-									 * @link http://mxpcms.sourceforge.net/
-									 ";
-				break;			
-				case 'MODS':				
-					$file_content = "/**
-									 * Language file [" . $this->module_file . "]
-									 * 
-									 * @package language
-									 * @author " . $mx_user->data['username'] . "
-									 * @" ."version $I" . "d: " . $this->module_file . ",v 1.-1 " . date( 'Y/m/d H:i:s') ." " . $userdata['username'] . " Exp $
-									 * @copyright (c) 2002-2008 [Jon Ohlsson] MX-Publisher Project Team
-									 * @license http://opensource.org/licenses/gpl-license.php GNU General Public License v2
-									 * @link http://mxpcms.sourceforge.net/
-									 ";
-				break;			
-				case 'PHPBB':
-					$file_content = "/**
-									 * Language file [" . $this->module_file . "]
-									 * 
-									 * @package language
-									 * @author " . $mx_user->data['username'] . "
-									 * @" ."version $I" . "d: " . $this->module_file . ",v 1.-1 " . date( 'Y/m/d H:i:s') ." " . $mx_user->data['username'] . " Exp $
-									 * @copyright (c) phpBB Limited <https://www.phpbb.com>
-									 * @license http://opensource.org/licenses/gpl-license.php GNU General Public License v2
-									 * @link http://www.phpbb.com
-									 ";
-				break;			
-				case 'phpbb_ext':
-					$file_content = "/**
-									 * Language file [" . $this->module_file . "]
-									 * 
-									 * @package language
-									 * @author " . $mx_user->data['username'] . "
-									 * @" ."version $I" . "d: " . $this->module_file . ",v 1.-1 " . date( 'Y/m/d H:i:s') ." " . $mx_user->data['username'] . " Exp $
-									 * @copyright (c) phpBB Limited <https://www.phpbb.com>
-									 * @license http://opensource.org/licenses/gpl-license.php GNU General Public License v2
-									 * @link http://www.phpbb.com
-									 ";
-				break;			
-			} 		
+			$file_content = "/**
+							 * Language file [" . $this->module_file . "]
+							 * 
+							 * @package language
+							 * @author " . $mx_user->data['username'] . "
+							 * @" ."version $I" . "d: " . $this->module_file . ",v 1.-1 " . date( 'Y/m/d H:i:s') ." " . $mx_user->data['username'] . " Exp $
+							 * @copyright (c) phpBB Limited <https://www.phpbb.com>
+							 * @license http://opensource.org/licenses/gpl-license.php GNU General Public License v2
+							 * @link http://www.phpbb.com
+							 ";
 		}
 		$file_content = preg_replace('#\* (Encoding|1 tab).*'. "\n" . '#', '', $file_content);
 		$file_content .= '* Encoding: ' . $this->file_encoding . "\n* 1 tab = 4 spaces\n */";
@@ -3241,12 +3194,11 @@ class mxp_translator
 	function extend($lang_mode = false, $image_mode = false, $default_module_style = '', $image_file = 'icon_info', $image_ext = '.gif')
 	{		
 		/** modifyed for phpBB  ext/orynider/mx_langtools/ */
+		global $user;
 		$module_root_path = $this->module_root_path;
 		
 		/** From MXP 2.8.x vs 3.0.x vs 3.2.x "_core" vs "all" */
 		$this->default_template_name = !empty($default_module_style) ? $default_module_style : 'all';
-		
-		$styles_installed = array();
 		
 		/* Check for all installed styles first */
 		$sql = 'SELECT style_path
@@ -3255,29 +3207,14 @@ class mxp_translator
 		while ($rows = $this->db->sql_fetchrow($result))
 		{
 			$styles_installed[] = $rows['style_path'];
-		}		
-		$this->db->sql_freeresult($result);		
-		
-		if (!is_array($styles_installed))
-		{		
-			/* Check for all installed styles first */
-			$sql = 'SELECT style_name
-				FROM ' . STYLES_TABLE;
-			$result = $this->db->sql_query($sql);
-			while ($rows = $this->db->sql_fetchrow($result))
-			{
-				$styles_installed[] = $rows['style_path'] = $rows['style_name'];
-			}
-		}		
-		
+		}
 		/* If query fails need to define this for foreach */
 		if (!is_array($styles_installed))
 		{
-			$rows['style_name'] = 'prosilver';
-			$styles_installed[] = $rows['style_name'];
+			$rows['style_path'] = 'prosilver';
+			$styles_installed[] = $rows['style_path'];
 		}		
-		$this->db->sql_freeresult($result);		
-		
+		$this->db->sql_freeresult($result);
 		/** 
 		 * Now check for the correct existance of all of the $user->style['style_path'] images into
 		 * each of the effectively installed styles. see $user->style['style_id'], $user->style['style_parent_id']
@@ -3310,16 +3247,16 @@ class mxp_translator
 		
 		if ($lang_mode != false)
 		{
-			$this->user->add_lang(array('common', 'acp/common', 'acp/board', 'install', 'posting'));
+			$user->add_lang(array('common', 'acp/common', 'acp/board', 'install', 'posting'));
 		}
 		if ($image_mode != false)
 		{
-			$this->user->action_install();
+			$user->action_install();
 		}
 		
-		$this->user_template_name = isset($this->user->style_name) ? $this->user->style_name : $this->user->style['style_name'];
+		$this->user_template_name = $user->style['style_path'];
 		
-		$ext_path_img_user = $module_root_path . 'styles/' .  rawurlencode($this->user_template_name) . '/images/menu_icons/' . $image_file;
+		$ext_path_img_user = $module_root_path . 'styles/' .  rawurlencode($user->style['style_path']) . '/images/menu_icons/' . $image_file;
 				
 		if (!(@file_exists($ext_path_img_user . $image_ext) && @file_exists($ext_path_img_user . '_medium' . $image_ext) && @file_exists($ext_path_img_user . '_full' . $image_ext)) )
 		{

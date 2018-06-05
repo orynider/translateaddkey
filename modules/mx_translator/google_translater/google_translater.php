@@ -61,7 +61,8 @@ class google_translater
 		{
 			$this->errors = 'No cURL support';
 		}
-		$this->lang = $lang;
+		global $mx_user;
+		$this->lang = $mx_user->lang;
 		$this->http_referer = $_SERVER['HTTP_REFERER'];		
 		$this->uri = 'http://translate.google.com/translate_a/t';		
 	}     
@@ -80,7 +81,7 @@ class google_translater
 			//$text = str_replace('=', ':', http_build_query($text, null, ','));
 			$data = '';
 			$result = '';
-			//$counter = count($text);
+			$counter = count($text);
 			foreach ($text as $key => $value)
 			{
 				if (is_array($value))

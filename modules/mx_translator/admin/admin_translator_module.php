@@ -7,7 +7,9 @@
 * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
+ 
 //namespace orynider\mx_translator\acp;
+
 $basename = basename( __FILE__);
 $mx_root_path = './../../../';
 $module_root_path = $mx_root_path . 'modules/mx_translator/';
@@ -33,14 +35,15 @@ if ( !empty( $setmodules))
 /**
 * mx_langtools ACP module
  */
-define('IN_PORTAL', 1);
-define('IN_ADMIN', 1); 
+@define('IN_PORTAL', 1);
+@define('IN_ADMIN', 1); 
 $phpEx = substr( __FILE__, strrpos( __FILE__, '.') + 1);
-define('MODULE_URL', PHPBB_URL . 'ext/orynider/mx_translator/');		
+		
 define('IN_AJAX', (isset($_GET['ajax']) && ($_GET['ajax'] == 1) && ($_SERVER['HTTP_SEREFER'] = $_SERVER['PHP_SELF'])) ? 1 : 0);
 
 $no_page_header = 'no_page_header';
 require_once($mx_root_path . 'admin/pagestart.' . $phpEx);
+define('MODULE_URL', PHPBB_URL . 'ext/orynider/mx_translator/');
 //include_once($module_root_path . 'includes/translator.' . $phpEx);
 
 //@error_reporting( E_ALL || !E_NOTICE);
@@ -49,7 +52,17 @@ require_once($mx_root_path . 'admin/pagestart.' . $phpEx);
 * Class  mxp_translator_module extends mxp_translator
 * Displays a message to the user and allows him to send an email
 */
- 
+
+/* START Include language file */
+$language = ($mx_user->lang['default_lang']) ? $mx_user->lang['default_lang'] : (($board_config['default_lang']) ? $board_config['default_lang'] : 'english');
+if ((@include $module_root_path . "language/lang_" . $default_lang . "/info_acp_translator.$phpEx") === false)
+{
+	if ((@include $module_root_path . "language/lang_english/info_acp_translator.$phpEx") === false)
+	{
+			mx_message_die(CRITICAL_ERROR, 'Language file ' . $module_root_path . "language/lang_" . $default_lang . "/info_acp_translator.$phpEx" . ' couldn\'t be opened.');
+	}
+	$language = 'english'; 
+}
 		
 /* Get an instance of the admin controller */
 if (!include_once($module_root_path . 'controller/mxp_translator.' . $phpEx))
@@ -105,6 +118,7 @@ function acp_translator_set_config($config_name, $config_value)
 	$portal_config[$config_name] = $config_value;
 	$mx_cache->put('translator_config', $translator_config);
 }
+
 /**
  * Get config data
  *
@@ -113,9 +127,9 @@ function acp_translator_set_config($config_name, $config_value)
  */
 function acp_translator_get_config($use_cache = true)
 {
-	global $db, $mx_cache, $translator_config, $mx_table_prefix;
+	global $mx_cache, $mx_user, $db, $lang, $translator_config, $mx_table_prefix;
 	global $board_config;
-	
+		
 	$mx_table_prefix = !empty($mx_table_prefix) ? $mx_table_prefix : 'mx_';
 	define('TRANSLATOR_CONFIG_TABLE', $mx_table_prefix . "translator_config");
 	
@@ -153,20 +167,24 @@ function acp_translator_get_config($use_cache = true)
 		$mx_cache->put('translator_config', $translator_config);
 /* * /	} /**/
 }
+
 /** **/
 if ($mx_request_vars->is_post('submit') )
 {
 	$mode = 'submit';
 }
+
 /** Load the "settings" or "manage" module modes **/
 switch ($mode)
 {
 	case 'submit':	
+		
 		// Is the form being submitted to us?
 		if ($mx_request_vars->is_empty_post('translator_default_lang') || $mx_request_vars->is_empty_post('translator_choice_lang'))
 		{
 			mx_message_die(GENERAL_ERROR, "Failed to update translator configuration, you didn't specified valid values or your admin templates are incompatible with this version of MXP.");
 		}
+		
 		$s_errors = (bool) count($errors);	
 		acp_translator_set_config('translator_default_lang', ($mx_request_vars->request('translator_default_lang', 'en')));
 		acp_translator_set_config('translator_choice_lang', ($mx_request_vars->request('translator_choice_lang', 'de,fr,es,ro')));
@@ -343,6 +361,7 @@ switch ($mode)
 		}		
 	break;				
 }
+
 function display_settings($tpl_name, $page_title)	
 {
 		global $mxp_translator, $template, $mx_user;

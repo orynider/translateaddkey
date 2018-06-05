@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Language Tools Extension for the phpBB Forum Software package
+ * Knowledge Base extension for the phpBB Forum Software package
  *
  * @copyright (c) 2018, orynider, https://mxpcms.sourceforge.net
  * @license GNU General Public License, version 2 (GPL-2.0)
