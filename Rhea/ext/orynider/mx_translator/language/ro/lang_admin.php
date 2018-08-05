@@ -1,23 +1,32 @@
-﻿<?php
+<?php
 /**
- * Language file [lang_admin.php]
+ * Language file [info_acp_translator.php]
  * 
  * @package language
- * @author admin
- * @version d: lang_admin.php,v 1.6 2018/03/27 23:33:34 admin Exp $
- * @copyright (c) phpBB Limited <https://www.phpbb.com>
+ * @author Culprit
+ * @version : info_acp_translator.php,v 1.5 2008/02/27 16:12:56 Culprit Exp $
+ * @copyright (c) 2002-2008 [Jon Ohlsson] MX-Publisher Project Team
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License v2
- * @link http://www.phpbb.com
+ * @link http://www.mxpcms.sourceforge.net
  * Encoding: UTF-8
  * 1 tab = 4 spaces
  */
 
-if ( !isset($lang) )
+/**
+* DO NOT CHANGE
+*/
+if (!defined('IN_PHPBB'))
+{
+	exit;
+}
+if (empty($lang) || !is_array($lang))
 {
 	$lang = array();
 }
-
-$lang = array_merge( $lang, array( // #
+/**
+* LANG 
+ */
+$lang = array_merge($lang, array( // #
 	'LANGUAGES_TOOLS'				=> 'Instrumente Lingvistice',
 	'ACP_MX_LANGTOOLS_TITLE'		=> 'Instrumentele Lingvistice Extinse',
 	'MX_Module_2_Translate'			=> 'Traducător',
@@ -33,7 +42,7 @@ $lang = array_merge( $lang, array( // #
 	'Trans_title'					=> 'Traduceţi la dvs. Limba',
 	'Trans_description'				=> 'Utilizaţi Panoul de Control pentru a traduce portalul limba dumneavoastră</br>',
 	'Trans_which_core'				=> 'Care parte',
-	'Trans_select_file'				=> 'Selectaţi fiţierul pentru a traduce',
+	'Trans_select_file'				=> 'Selectaţi fişierul pentru a traduce',
 	'Trans_from_desc'				=> 'Limba prestabilită pentru traducerea de la',
 	'Trans_leave_orig'				=> 'Dacă nu este tradus text <b> lăsaţi original </br>',
 	'Trans_selected_file'			=> 'Fiţier selectat',
@@ -80,8 +89,7 @@ $lang = array_merge( $lang, array( // #
 	'TRANSLATOR_CHOICE_LANG'			=> 'Traduceri',
 	'TRANSLATOR_CHOICE_LANG_EXPLAIN'	=> 'Introduceţi codurile limbilor pe care doriţi să le aveţi disponibile separate printr-o virgulă, de exemplu de, fr, es, ro',
 ));
-
-//
-// That's all Folks!
-// -------------------------------------------------
+/*
+* That's all Folks!
+* / -------------------------------------------------*/
 ?>
