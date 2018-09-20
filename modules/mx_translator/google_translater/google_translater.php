@@ -206,7 +206,7 @@ class google_translater
     {
         if (empty($this->errors)) 
 		{
-            $page = $this->_curl_to_google('http://translate.google.com/');
+            $page = $this->_curl_to_google('http://translate.google.co.il/');
             preg_match('%<select[^<]*?tl[^<]*?>(.*?)</select>%is', $page, $match);
             preg_match_all("%<option.*?value=\"(.*?)\">(.*?)</option>%is", $match[0], $languages);
             $result = array();
@@ -226,7 +226,7 @@ class google_translater
     {
         if (empty($this->errors)) 
 		{
-            $page = $this->_curl_to_google('http://translate.google.com/');
+            $page = $this->_curl_to_google('http://translate.google.co.il/');
             preg_match('%<select[^<]*?tl[^<]*?>(.*?)</select>%is', $page, $match);
             return $match[1];
 		} 
@@ -272,7 +272,7 @@ class google_translater
 		/** **/
 		curl_setopt($ch, CURLOPT_ENCODING, 'UTF-8');		
 		//curl_setopt($ch, CURLOPT_USERAGENT, @get_browser(null, true));
-		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win32; x86; rv:52.7) Gecko/20100101 Firefox/52.7.2');  
+		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win32; x86; rv:63.0) Gecko/20100101 Firefox/63.0.68');  
 		$response = curl_exec($ch);
         // Check if any error occured
         if(curl_errno($ch))
@@ -289,15 +289,31 @@ class google_translater
 		if (empty($this->errors))
 		{
             $result = '';
+	       
+			 if(empty($response))
+		     {
+		            $this->errors .=  'No Response Error: ' . $response;
+		            print_r($this->errors);
+		     }			
+				
 			$json = json_decode($response);
+	 		
+			if(!is_object($json))
+		    {
+		        $this->errors .=  'No Response Error: ' . $response;
+		        print_r($this->errors);
+				return false;
+		    }			
+			
 			//Force array
-			$sentences = $json->sentences;
-			$sentences = is_array($sentences) ? $sentences : array($sentences);
+			$sentences = is_object($json) ? $json->sentences : new RecursiveIteratorIterator(new RecursiveArrayIterator($json), RecursiveIteratorIterator::SELF_FIRST);
+			$sentences = is_object($sentences) ? $sentences : new RecursiveIteratorIterator(new RecursiveArrayIterator($json), RecursiveIteratorIterator::SELF_FIRST);	
+				
 			foreach ($sentences as $sentence) 
 			{
-                $result .= $translit ? $sentence->translit : $sentence->trans;  
-            }
-            return $result;
+	             $result .= ($translit != false) && !is_object($sentence->trans) ? (!is_object($sentence->translit) ? @print_r($sentence->translit, true) : $sentence->translit) : @print_r($sentence->trans, true);  
+	        }
+	        return $result;
 		} 
 		else
 		{

@@ -360,7 +360,7 @@ class mxp_translator
 		$this->dir_select = $this->mxp_cookie( MXP_LANG_TOOLS_COOKIE_NAME . 'dir_select', @$_POST['translate']['dir']);		
 		$this->module_select = $this->mxp_cookie( MXP_LANG_TOOLS_COOKIE_NAME . 'module_select', @$_POST['translate']['module']);
 		$this->module_file = $this->mxp_cookie( MXP_LANG_TOOLS_COOKIE_NAME . 'module_file'  , @$_POST['translate']['file']);
-		
+		$this->language_into = 'lang_punjabi';
 		$this->mxp_get_lang_list();
 		$this->get_module_list();
 		//print_r($this->ext_root_path);
@@ -1198,7 +1198,7 @@ class mxp_translator
 						$list_ary = $this->language_dir_list['PHPBB'];
 					break;					
 					case 'MODS':
-						$list_ary = $this->language_dir_list[$this->dir_select];
+						$list_ary = @isset($this->dir_select) ? @print_r($this->language_dir_list[$this->dir_select], true) : '';
 					break;
 					case 'phpbb_ext':
 						$list_ary = $this->language_dir_list[$this->dir_select];
@@ -1216,6 +1216,10 @@ class mxp_translator
 		{
 			return '';
 		}
+		if (!is_array($list_ary))
+		{
+			$list_ary = array(print_r($list_ary, true), '');
+		}		
 		asort($list_ary);
 		reset($list_ary);
 		$option_list = '';
@@ -1554,7 +1558,7 @@ class mxp_translator
 									 * 
 									 * @package language
 									 * @author " . $mx_user->data['username'] . "
-									 * @" ."version $I" . "d: " . $this->module_file . ",v 1.-1 " . date( 'Y/m/d H:i:s') ." " . $userdata['username'] . " Exp $
+									 * @" . "version " . "$" ."I" . "d: " . $this->module_file . ",v 1.-1 " . date( 'Y/m/d H:i:s') . " " . $mx_user->data['username'] . " Exp $
 									 * @copyright (c) 2002-2008 [Jon Ohlsson] MX-Publisher Project Team
 									 * @license http://opensource.org/licenses/gpl-license.php GNU General Public License v2
 									 * @link http://mxpcms.sourceforge.net/
@@ -1566,7 +1570,7 @@ class mxp_translator
 									 * 
 									 * @package language
 									 * @author " . $mx_user->data['username'] . "
-									 * @" ."version $I" . "d: " . $this->module_file . ",v 1.-1 " . date( 'Y/m/d H:i:s') ." " . $userdata['username'] . " Exp $
+									 * @" . "version " . "$" ."I" . "d: " . $this->module_file . ",v 1.-1 " . date( 'Y/m/d H:i:s') . " " . $mx_user->data['username'] . " Exp $
 									 * @copyright (c) 2002-2008 [Jon Ohlsson] MX-Publisher Project Team
 									 * @license http://opensource.org/licenses/gpl-license.php GNU General Public License v2
 									 * @link http://mxpcms.sourceforge.net/
@@ -1578,7 +1582,7 @@ class mxp_translator
 									 * 
 									 * @package language
 									 * @author " . $mx_user->data['username'] . "
-									 * @" ."version $I" . "d: " . $this->module_file . ",v 1.-1 " . date( 'Y/m/d H:i:s') ." " . $mx_user->data['username'] . " Exp $
+									 * @" . "version " . "$" ."I" . "d: " . $this->module_file . ",v 1.-1 " . date( 'Y/m/d H:i:s') ." " . $mx_user->data['username'] . " Exp $
 									 * @copyright (c) phpBB Limited <https://www.phpbb.com>
 									 * @license http://opensource.org/licenses/gpl-license.php GNU General Public License v2
 									 * @link http://www.phpbb.com
@@ -1590,7 +1594,7 @@ class mxp_translator
 									 * 
 									 * @package language
 									 * @author " . $mx_user->data['username'] . "
-									 * @" ."version $I" . "d: " . $this->module_file . ",v 1.-1 " . date( 'Y/m/d H:i:s') ." " . $mx_user->data['username'] . " Exp $
+									 * @" ."version " . "$" ."I" . "d: " . $this->module_file . ",v 1.-1 " . date( 'Y/m/d H:i:s') ." " . $mx_user->data['username'] . " Exp $
 									 * @copyright (c) phpBB Limited <https://www.phpbb.com>
 									 * @license http://opensource.org/licenses/gpl-license.php GNU General Public License v2
 									 * @link http://www.phpbb.com
@@ -2081,7 +2085,9 @@ class mxp_translator
 				case 'ossetian':
 					$lang_name = 'os';
 				break;
+				case 'punjabi':
 				case 'panjabi':
+				case 'gurmiki':				
 					$lang_name = 'pa';
 				break;
 				case 'pali':
@@ -3515,8 +3521,8 @@ class mxp_translator
 			}			
 			$params = !empty($params) ? $params : "&i=-orynider-mx_translator-acp-translator_module&mode=".$mode;
 			$this->u_action = !empty($this->u_action) ? $this->u_action : '';
-			/* * /	
-			print_r($this->gen_select_list( 'html', 'dirs', $this->dir_select)); 
+			/* * /		
+			//print_r($this->gen_select_list( 'html', 'dirs', $this->dir_select)); 
 			/* */					
 			$this->template->assign_vars(array( // #
 				'TH_COLOR2' => $theme['th_color2'],
