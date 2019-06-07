@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Lnaguage Tools Extension for the phpBB Forum Software package
+ * Language Tools Extension for the phpBB Forum Software package
  *
 * @copyright (c) orynider <http://mxpcms.sourceforge.net>
 * @license GNU General Public License, version 2 (GPL-2.0)
@@ -25,14 +25,14 @@ if ( !empty( $setmodules))
 * mx_langtools ACP module
  */
 $basename = basename( __FILE__);
+$phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : './../';
 $mx_root_path = (defined('PHPBB_USE_BOARD_URL_PATH') && PHPBB_USE_BOARD_URL_PATH) ? generate_board_url() . '/' : $phpbb_root_path;
 $module_root_path = $phpbb_root_path . 'ext/orynider/mx_translator/';
 $admin_module_root_path = $module_root_path . 'acp/';		
 $phpEx = substr( __FILE__, strrpos( __FILE__, '.') + 1);
-define('MODULE_URL', PHPBB_URL . 'ext/orynider/mx_translator/');		
+define('MODULE_URL', generate_board_url() . 'ext/orynider/mx_translator/');		
 //define('IN_AJAX', (isset($_GET['ajax']) && ($_GET['ajax'] == 1) && ($_SERVER['HTTP_SEREFER'] = $_SERVER['PHP_SELF'])) ? 1 : 0);
 define('IN_PORTAL', 1);
-define('IN_ADMIN', 1);
 
 $no_page_header = 'no_page_header';
 //require_once($mx_root_path . 'admin/pagestart.' . $phpEx);

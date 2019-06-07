@@ -80,7 +80,7 @@ class google_translater
 			//$text = str_replace('=', ':', http_build_query($text, null, ','));
 			$data = '';
 			$result = '';
-			//$counter = count($text);
+			$counter = count($text);
 			foreach ($text as $key => $value)
 			{
 				if (is_array($value))

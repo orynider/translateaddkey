@@ -1,15 +1,13 @@
 <?php
 /**
  *
- * Lnaguage Tools Extension for the phpBB Forum Software package
- *
+ * Language Tools Extension for the phpBB Forum Software package
+* @version $Id$
 * @copyright (c) orynider <http://mxpcms.sourceforge.net>
 * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
- 
 //namespace orynider\mx_translator\acp;
-
 $basename = basename( __FILE__);
 $mx_root_path = './../../../';
 $module_root_path = $mx_root_path . 'modules/mx_translator/';
@@ -19,6 +17,8 @@ $admin_module_root_path = $module_root_path . 'admin/';
 //$mx_root_path = (defined('PHPBB_USE_BOARD_URL_PATH') && PHPBB_USE_BOARD_URL_PATH) ? generate_board_url() . '/' : $phpbb_root_path;
 //$module_root_path = $phpbb_root_path . 'ext/orynider/mx_translator/';
 //$admin_module_root_path = $module_root_path . 'acp/';
+
+@define('IN_PORTAL', 1);
 
 /* */
 if ( !empty( $setmodules))
@@ -35,15 +35,16 @@ if ( !empty( $setmodules))
 /**
 * mx_langtools ACP module
  */
-@define('IN_PORTAL', 1);
 @define('IN_ADMIN', 1); 
 $phpEx = substr( __FILE__, strrpos( __FILE__, '.') + 1);
-		
+if (!defined('PHP_EXT')) define('PHP_EXT', $phpEx);
+$lang = array();
+$no_page_header = '';
+require_once($mx_root_path . 'admin/pagestart.' . $phpEx);
+
+define('MODULE_URL', PORTAL_URL . 'modules/mx_translator/');
 define('IN_AJAX', (isset($_GET['ajax']) && ($_GET['ajax'] == 1) && ($_SERVER['HTTP_SEREFER'] = $_SERVER['PHP_SELF'])) ? 1 : 0);
 
-$no_page_header = 'no_page_header';
-require_once($mx_root_path . 'admin/pagestart.' . $phpEx);
-define('MODULE_URL', PHPBB_URL . 'ext/orynider/mx_translator/');
 //include_once($module_root_path . 'includes/translator.' . $phpEx);
 
 //@error_reporting( E_ALL || !E_NOTICE);
@@ -54,15 +55,18 @@ define('MODULE_URL', PHPBB_URL . 'ext/orynider/mx_translator/');
 */
 
 /* START Include language file */
-$language = ($mx_user->lang['default_lang']) ? $mx_user->lang['default_lang'] : (($board_config['default_lang']) ? $board_config['default_lang'] : 'english');
-if ((@include $module_root_path . "language/lang_" . $default_lang . "/info_acp_translator.$phpEx") === false)
+$language = ($mx_user->user_language_name) ? $mx_user->user_language_name : (($board_config['default_lang']) ? $board_config['default_lang'] : 'english');
+
+if ((@include $module_root_path . "language/lang_" . $language . "/info_acp_translator.$phpEx") === false)
 {
 	if ((@include $module_root_path . "language/lang_english/info_acp_translator.$phpEx") === false)
 	{
-			mx_message_die(CRITICAL_ERROR, 'Language file ' . $module_root_path . "language/lang_" . $default_lang . "/info_acp_translator.$phpEx" . ' couldn\'t be opened.');
+			mx_message_die(CRITICAL_ERROR, 'Language file ' . $module_root_path . "language/lang_" . $language . "/info_acp_translator.$phpEx" . ' couldn\'t be opened.');
 	}
 	$language = 'english'; 
 }
+
+//include_once($module_root_path . 'includes/translator.' . $phpEx);
 		
 /* Get an instance of the admin controller */
 if (!include_once($module_root_path . 'controller/mxp_translator.' . $phpEx))
@@ -118,7 +122,6 @@ function acp_translator_set_config($config_name, $config_value)
 	$portal_config[$config_name] = $config_value;
 	$mx_cache->put('translator_config', $translator_config);
 }
-
 /**
  * Get config data
  *
@@ -127,9 +130,9 @@ function acp_translator_set_config($config_name, $config_value)
  */
 function acp_translator_get_config($use_cache = true)
 {
-	global $mx_cache, $mx_user, $db, $lang, $translator_config, $mx_table_prefix;
+	global $db, $mx_cache, $translator_config, $mx_table_prefix;
 	global $board_config;
-		
+	
 	$mx_table_prefix = !empty($mx_table_prefix) ? $mx_table_prefix : 'mx_';
 	define('TRANSLATOR_CONFIG_TABLE', $mx_table_prefix . "translator_config");
 	
@@ -167,24 +170,20 @@ function acp_translator_get_config($use_cache = true)
 		$mx_cache->put('translator_config', $translator_config);
 /* * /	} /**/
 }
-
 /** **/
 if ($mx_request_vars->is_post('submit') )
 {
 	$mode = 'submit';
 }
-
 /** Load the "settings" or "manage" module modes **/
 switch ($mode)
 {
 	case 'submit':	
-		
 		// Is the form being submitted to us?
 		if ($mx_request_vars->is_empty_post('translator_default_lang') || $mx_request_vars->is_empty_post('translator_choice_lang'))
 		{
 			mx_message_die(GENERAL_ERROR, "Failed to update translator configuration, you didn't specified valid values or your admin templates are incompatible with this version of MXP.");
 		}
-		
 		$s_errors = (bool) count($errors);	
 		acp_translator_set_config('translator_default_lang', ($mx_request_vars->request('translator_default_lang', 'en')));
 		acp_translator_set_config('translator_choice_lang', ($mx_request_vars->request('translator_choice_lang', 'de,fr,es,ro')));
@@ -266,7 +265,7 @@ switch ($mode)
 				$mxp_translator->file_download();
 			}
 			
-			require_once($mx_root_path . 'admin/page_header_admin.' . $phpEx);
+			//require_once($mx_root_path . 'admin/page_header_admin.' . $phpEx);
 			$template->set_filenames(array('body' => $tpl_name.'.html'));
 			$template->assign_block_vars('file_to_translate_select', array());
 			
@@ -322,7 +321,7 @@ switch ($mode)
 			
 			$mxp_translator->assign_template_vars($template);	
 			$template->assign_vars(array( // #
-				'L_MX_MODULES' => $lang['MX_Modules'],
+				'L_MX_MODULES' => $lang['ACP_TRANSLATE_MX_MODULES'],
 			));
 			
 			if (($s == 'MODS') || ($s == 'phpbb_ext'))
@@ -333,7 +332,7 @@ switch ($mode)
 			$mxp_translator->file_translate();
 			
 			$template->pparse('body');
-			require_once($mx_root_path . 'admin/page_footer_admin.' . $phpEx);
+			//require_once($mx_root_path . 'admin/page_footer_admin.' . $phpEx);
 		}
 		else
 		{ // AJAX
@@ -366,14 +365,17 @@ function display_settings($tpl_name, $page_title)
 {
 		global $mxp_translator, $template, $mx_user;
 		global $mx_root_path, $module_root_path, $board_config;
+		
+		$basename = basename( __FILE__);
 		$php_ext = $phpEx = substr(__FILE__, strrpos( __FILE__, '.') + 1);
 		$u_action = $module_root_path . 'admin/' . $basename;
 		
 		/* Load common language files if they not loaded yet */
 		$mxp_translator->_load_lang($module_root_path, 'lang_admin', true);
-		
+		//Load Shared phpBB3 common language file										
+		$mx_user->_load_lang('phpbb3', 'common', true);			
 		// Create a form key for preventing CSRF attacks 
-		require_once($mx_root_path . 'admin/page_header_admin.' . $phpEx);
+		//require_once($mx_root_path . 'admin/page_header_admin.' . $phpEx);
 		
 		$errors = array();
 		
@@ -395,11 +397,14 @@ function display_settings($tpl_name, $page_title)
 			'L_TRANSLATOR_CHOICE_LANG'			=> $mxp_translator->lang('TRANSLATOR_CHOICE_LANG'),
 			'L_TRANSLATOR_CHOICE_LANG_EXPLAIN'	=> $mxp_translator->lang('TRANSLATOR_CHOICE_LANG_EXPLAIN'),
 			
-			'TRANSLATOR_DEFAULT_LANG'	=> (isset($board_config['translator_default_lang'])) ? $board_config['translator_default_lang'] : 'error',
-			'TRANSLATOR_CHOICE_LANG'	=> (isset($board_config['translator_choice_lang'])) ? $board_config['translator_choice_lang'] : 'error',
+			'TRANSLATOR_DEFAULT_LANG'		=> (isset($board_config['translator_default_lang'])) ? $board_config['translator_default_lang'] : 'error',
+			'TRANSLATOR_CHOICE_LANG'			=> (isset($board_config['translator_choice_lang'])) ? $board_config['translator_choice_lang'] : 'error',
+			
+			'L_SUBMIT'		=> $mx_user->lang['SUBMIT'] . '',
+ 			'L_RESET	'		=> $mx_user->lang['RESET'] . '',		
 		));
 		$template->pparse('body');
 		global $mx_backend, $db; //decapritated use if(is_object($db)){	$db->sql_close(); } in page_header_admin.php
-		require_once($mx_root_path . 'admin/page_footer_admin.' . $phpEx);
+		//require_once($mx_root_path . 'admin/page_footer_admin.' . $phpEx);
 }
 ?>
