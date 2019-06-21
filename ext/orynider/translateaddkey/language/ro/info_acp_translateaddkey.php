@@ -1,10 +1,10 @@
 <?php
 /**
- * Language file [info_acp_translator.php]
+ * Language file [info_acp_translateaddkey.php]
  * 
  * @package language
  * @author Culprit
- * @version : info_acp_translator.php,v 1.5 2008/02/27 16:12:56 Culprit Exp $
+ * @version : info_acp_translateaddkey.php,v 1.5 2008/02/27 16:12:56 Culprit Exp $
  * @copyright (c) 2002-2008 [Jon Ohlsson] MX-Publisher Project Team
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License v2
  * @link http://www.mxpcms.sourceforge.net

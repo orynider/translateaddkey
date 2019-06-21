@@ -1,13 +1,13 @@
 <?php
 /**
 *
-* @package phpBB Extension - Google translator
+* @package phpBB Extension - Google translateaddkey
 * @copyright (c) 2018 orynider
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
 *
 */
 
-namespace orynider\mx_translator\event;
+namespace orynider\translateaddkey\event;
 
 /**
 * @ignore
@@ -40,7 +40,7 @@ class listener implements EventSubscriberInterface
 	{
 		$lang_set_ext = $event['lang_set_ext'];
 		$lang_set_ext[] = array(
-		'ext_name' => 'orynider/mx_translator',
+		'ext_name' => 'orynider/translateaddkey',
 		'lang_set' => 'common',
 		);
 		$event['lang_set_ext'] = $lang_set_ext;
@@ -48,8 +48,8 @@ class listener implements EventSubscriberInterface
 	public function navbar_header_after($event)
 	{
 		$this->template->assign_vars(array(
-		'TRANSLATOR_DEFAULT_LANG'	=> (isset($this->config['translator_default_lang'])) ? $this->config['translator_default_lang'] : 'ro',
-		'TRANSLATOR_CHOICE_LANG'	=> (isset($this->config['translator_choice_lang'])) ? $this->config['translator_choice_lang'] : 'en',
+		'TRANSLATOR_DEFAULT_LANG'	=> (isset($this->config['translateaddkey_default_lang'])) ? $this->config['translateaddkey_default_lang'] : 'ro',
+		'TRANSLATOR_CHOICE_LANG'	=> (isset($this->config['translateaddkey_choice_lang'])) ? $this->config['translateaddkey_choice_lang'] : 'en',
         ));
     }
 }

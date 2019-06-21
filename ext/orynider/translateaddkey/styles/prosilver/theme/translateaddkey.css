@@ -1,11 +1,11 @@
-#translator{
+#translateaddkey{
 	float: right;
 	margin-right: 5px;
 	margin-left: 15px;
 	margin-top: 5px;
 	margin-bottom: 10px;
 }
-.rtl #translator{
+.rtl #translateaddkey{
 	float: left;
 	margin-right: 15px;
 	margin-left: 5px;
